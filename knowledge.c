@@ -57,11 +57,69 @@ int knowledge_get(const char *intent, const char *entity, char *response, int n)
  *   KB_INVALID, if the intent is not a valid question word
  */
 int knowledge_put(const char *intent, const char *entity, const char *response) {
+    NODE *next, *prev;
 
-	/* to be implemented */
+    if (compare_token(intent, "what") == 0) {
+        NODE temp = { "", "", "", NULL };
+        strcpy(temp.intent, intent);
+        strcpy(temp.entity, entity);
+        strcpy(temp.response, response);
 
-	return KB_INVALID;
+        if (strlen(headWhat->intent) == 0) {
+            *headWhat = temp;
+        } else {
+            prev = NULL;
+            next = headWhat;
 
+            while (next) {
+                prev = next;
+                next = next->next;
+            }
+
+            *(prev->next) = temp;
+        }
+    } else if (compare_token(intent, "where") == 0) {
+        NODE temp = { "", "", "", NULL };
+        strcpy(temp.intent, intent);
+        strcpy(temp.entity, entity);
+        strcpy(temp.response, response);
+
+        if (strlen(headWhere->intent) == 0) {
+            *headWhere = temp;
+        } else {
+            prev = NULL;
+            next = headWhere;
+
+            while (next) {
+                prev = next;
+                next = next->next;
+            }
+
+            *(prev->next) = temp;
+        }
+    } else if (compare_token(intent, "who") == 0) {
+        NODE temp = { "", "", "", NULL };
+        strcpy(temp.intent, intent);
+        strcpy(temp.entity, entity);
+        strcpy(temp.response, response);
+
+        if (strlen(headWho->intent) == 0) {
+            *headWho = temp;
+        } else {
+            prev = NULL;
+            next = headWho;
+
+            while (next) {
+                prev = next;
+                next = next->next;
+            }
+
+            *(prev->next) = temp;
+        }
+    } else {
+        return KB_INVALID;
+    }
+    return KB_OK;
 }
 
 
@@ -98,25 +156,28 @@ void knowledge_reset() {
  *   f - the file
  */
 void knowledge_write(FILE *f) {
-    NODE ptr_what = *headWhat, 
-        ptr_where = *headWhere, 
-        ptr_who = *headWho;
+    NODE *ptr_what = headWhat,
+        *ptr_where = headWhere,
+        *ptr_who = headWho;
 
     fprintf(f, "[what]\n");
-    while (ptr_what.next) {
-      fprintf(f, "%s=%s\n", ptr_what.entity, ptr_what.response);
+    while (ptr_what != NULL) {
+        fprintf(f, "%s=%s\n", ptr_what->entity, ptr_what->response);
+        ptr_what = ptr_what->next;
     }
     fprintf(f, "\n");
 
     fprintf(f, "[where]\n");
-    while (ptr_where.next) {
-      fprintf(f, "%s=%s\n", ptr_where.entity, ptr_where.response);
+    while (ptr_where != NULL) {
+        fprintf(f, "%s=%s\n", ptr_where->entity, ptr_where->response);
+        ptr_where = ptr_where->next;
     }
     fprintf(f, "\n");
 
     fprintf(f, "[who]\n");
-    while (ptr_who.next) {
-      fprintf(f, "%s=%s\n", ptr_who.entity, ptr_who.response);
+    while (ptr_who != NULL) {
+        fprintf(f, "%s=%s\n", ptr_who->entity, ptr_who->response);
+        ptr_who = ptr_who->next;
     }
     fprintf(f, "\n");
 }

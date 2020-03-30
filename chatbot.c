@@ -470,39 +470,47 @@ int chatbot_is_save(const char *intent) {
  */
 int chatbot_do_save(int inc, char *inv[], char *response, int n) {
     char *filename;
-      if (inc < 2) {
-          snprintf(response, n, "Please provide a name for the file to save my knowledge to.");
-      return 0;
-      } else if (inc == 2) {
-      strcpy(filename, inv[1]);
-      } else {
-          int second_word_is_as = compare_token(inv[1], "as") == 0;
-          int second_word_is_to = compare_token(inv[1], "to") == 0;
-          
-      if (second_word_is_as || second_word_is_to) {
-        strcpy(filename, inv[2]);
-        if (inc > 3) {
-          for (int k = 3; k < inc; k++) {
-            strcat(filename, " ");
-            strcat(filename, inv[k]);
-          }
-        }
-          } else {
-              snprintf(response, n, "I do not understand what do you mean by %s %s.", inv[0], inv[1]);
+    if (inc < 2) {
+        snprintf(response, n, "Please provide a name for the file to save my knowledge to.");
         return 0;
-          }
-      }
+    } else {
+        int second_word_is_part_of_speech = compare_token(inv[1], "as") == 0
+         || compare_token(inv[1], "to") == 0;
+          
+        if (second_word_is_part_of_speech) {
+            if (inc == 2) {
+                snprintf(response, n, "Please provide a name for the file to save my knowledge to.");
+                return 0;
+            }
+            strcpy(filename, inv[2]);
+            if (inc > 3) {
+                for (int k = 3; k < inc; k++) {
+                    strcat(filename, " ");
+                    strcat(filename, inv[k]);
+                }
+            }
+        } else {
+            strcpy(filename, inv[1]);
+            if (inc > 2) {
+                for (int k = 2; k < inc; k++) {
+                    strcat(filename, " ");
+                    strcat(filename, inv[k]);
+                }
+            }
+        }
+    }
 
     FILE *file = fopen(filename, "w");
 
     if (filename == NULL) {
-      snprintf(response, n, "Unable to open '%s' for writing.", filename);
-      return 0;
+        snprintf(response, n, "Unable to open '%s' for writing.", filename);
+        return 0;
     }
 
     knowledge_write(file);
     fclose(file);
 
+    snprintf(response, n, "I have successfully saved my knowledge to %s.", filename);
     return 0;
 }
 

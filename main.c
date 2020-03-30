@@ -16,6 +16,13 @@
 /* word delimiters */
 const char *delimiters = " ?\t\n";
 
+NODE what = { NULL, NULL, NULL, NULL },
+	where = { NULL, NULL, NULL, NULL },
+	who = { NULL, NULL, NULL, NULL };
+
+NODE *headWhat = &what, 
+	*headWhere = &where, 
+	*headWho = &who;
 
 /*
  * Main loop.

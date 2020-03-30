@@ -29,9 +29,9 @@ typedef struct node{
   char entity[MAX_ENTITY]; // rest of the question
   char response[MAX_RESPONSE]; // response to the question
   struct node *next; // putting it into a list
-}NODE;
+} NODE;
 
-NODE *headWhat, *headWho, *headWhere; // head of the list
+extern NODE *headWhat, *headWho, *headWhere; // head of the list
 NODE *pointer; // pointing whatever you want
 
 /* return codes for knowledge_get() and knowledge_put() */
